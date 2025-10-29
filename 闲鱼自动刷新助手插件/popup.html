@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>闲鱼自动刷新助手</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 360px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #667eea;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .section {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #555;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 16px;
+      background: #667eea;
+      margin-right: 8px;
+      border-radius: 2px;
+    }
+
+    .input-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+    }
+
+    .btn-secondary {
+      background: #f5f5f5;
+      color: #666;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .status {
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status.active {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+
+    .status.inactive {
+      background: #fce4ec;
+      color: #c2185b;
+      border: 1px solid #f8bbd0;
+    }
+
+    .status-icon {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status.active .status-icon {
+      background: #2e7d32;
+    }
+
+    .status.inactive .status-icon {
+      background: #c2185b;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .info {
+      font-size: 12px;
+      color: #999;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 12px 8px;
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.3;
+    }
+
+    .tab-info {
+      font-size: 12px;
+      color: #666;
+      background: #f5f5f5;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      word-break: break-all;
+    }
+
+    .footer {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 11px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 闲鱼自动刷新助手</h1>
+
+    <!-- 当前标签页信息 -->
+    <div class="section">
+      <div class="section-title">当前标签页</div>
+      <div id="tabInfo" class="tab-info">获取中...</div>
+      <div id="refreshStatus" class="status inactive">
+        <span class="status-icon"></span>
+        <span>自动刷新：未启动</span>
+      </div>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="section">
+      <div class="section-title">运行统计</div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value" id="refreshCount">0</div>
+          <div class="stat-label">已刷新次数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="verifyCount">0</div>
+          <div class="stat-label">已验证次数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="nextRefresh">--</div>
+          <div class="stat-label">下次刷新</div>
+        </div>
+      </div>
+      <button id="resetStats" class="btn-secondary" style="width: 100%; margin-top: 10px;">重置统计</button>
+    </div>
+
+    <!-- 自动刷新设置 -->
+    <div class="section">
+      <div class="section-title">自动刷新设置</div>
+      <div class="input-group">
+        <label for="minInterval">最小间隔（秒）</label>
+        <input type="number" id="minInterval" min="30" max="300" value="45">
+      </div>
+      <div class="input-group">
+        <label for="maxInterval">最大间隔（秒）</label>
+        <input type="number" id="maxInterval" min="30" max="300" value="60">
+      </div>
+      <div class="button-group">
+        <button id="startRefresh" class="btn-primary">启动刷新</button>
+        <button id="stopRefresh" class="btn-danger">停止刷新</button>
+      </div>
+      <div class="info">
+        💡 系统会在最小和最大间隔之间随机选择刷新时间<br>
+        📌 检测到goofish.com会自动启动（默认45-60秒）
+      </div>
+    </div>
+
+    <!-- 滑块验证 -->
+    <div class="section">
+      <div class="section-title">滑块验证</div>
+      <button id="testSlider" class="btn-secondary" style="width: 100%">手动测试滑块</button>
+      <div class="info">
+        ✨ 插件会自动检测并完成滑块验证<br>
+        📝 如需测试，点击按钮手动触发
+      </div>
+    </div>
+
+    <div class="footer">
+      Version 1.0.0 | Made with <a href="https://github.com/RickForYK/xianyu-auto-reply-cookiecloud.git" target="_blank">RickForYK</a>❤️
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
+
