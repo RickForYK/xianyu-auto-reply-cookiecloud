@@ -4382,6 +4382,7 @@ class XianyuLive:
         await ws.send(json.dumps(msg))
 
     async def init(self, ws):
+        return
         # 如果没有token或者token过期，获取新token
         token_refresh_attempted = False
         if not self.current_token or (time.time() - self.last_token_refresh_time) >= self.token_refresh_interval:
@@ -6146,8 +6147,8 @@ class XianyuLive:
                         self.heartbeat_task = asyncio.create_task(self.heartbeat_loop(websocket))
 
                         # 启动token刷新任务
-                        logger.info(f"【{self.cookie_id}】启动token刷新任务...")
-                        self.token_refresh_task = asyncio.create_task(self.token_refresh_loop())
+                        # logger.info(f"【{self.cookie_id}】启动token刷新任务...")
+                        # self.token_refresh_task = asyncio.create_task(self.token_refresh_loop())
 
                         # 启动暂停记录清理任务
                         if not self.cleanup_task:
